@@ -360,9 +360,9 @@
         </section>
 
         <section class="grp">
-          <h3><em>02</em>Tier 2 &mdash; three-layer profile</h3>
+          <h3><em>02</em>Tier 2 &mdash; measured ocean conditions</h3>
           <ul>
-            <li><span>Significant wave height, m &mdash; the ordering variable</span><span class="src">CDIP MOP + buoys</span></li>
+            <li><span>Significant wave height, m</span><span class="src">CDIP MOP + buoys</span></li>
             <li><span>Sea-surface temperature climatology</span><span class="src">NASA MUR</span></li>
             <li><span>Surface currents</span><span class="src">SCCOOS / CeNCOOS HF radar</span></li>
             <li><span>Nearshore and offshore slope</span><span class="src">ETOPO 2022</span></li>
@@ -398,15 +398,21 @@
         <section class="grp">
           <h3><em>07</em>Reported diagnostics &mdash; not scored</h3>
           <ul>
-            <li><span>Gridded CDR efficiency, cross-checked against the ordering</span><span class="src">Zhou et al. 2025</span></li>
+            <li><span>Gridded CDR efficiency, cross-checked against the efficiency sub-score</span><span class="src">Zhou et al. 2025</span></li>
             <li><span>Mineral dissolution kinetics &mdash; downstream flux only</span><span class="src">Oelkers 2018; Rimstidt 2012</span></li>
           </ul>
         </section>
 
+        <!-- Rewritten 2026-08-02. Said "There is no composite score ... eligible segments are
+             ordered on wave height alone", which was stale twice over: the wave-height ordering
+             was deleted with the measure step (2026-07-31) and its top-tercile cut (2026-08-01),
+             and the flat "no composite score" contradicted the Suitability Map row on this same
+             page. The two maps disagree here on purpose, so the note now says which does what. -->
         <p class="note">
-          There is no composite score. The measured layers are reported side by side and never
-          summed; eligible segments are ordered on wave height alone, and the permit layer lists
-          triggers rather than weighting them. Counts above are the June&nbsp;2026 statewide run
+          The two maps use these layers differently, on purpose. The <b>Suitability Map</b>
+          combines the ocean conditions in&nbsp;02 into a composite score; the <b>Siting Tool</b>
+          reports each layer on its own, ranks nothing, and lists permit triggers rather than
+          weighting them. Counts above are the June&nbsp;2026 statewide run
           &mdash; pipeline output <code>ca_cew_segments.gpkg</code> (read
           <code>layer="segments"</code>). Raw drivers are fetched by <code>fetch_*.py</code> and
           are not tracked in git.
