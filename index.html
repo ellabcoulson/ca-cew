@@ -1,0 +1,455 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A Statewide Siting Tool for Coastal Enhanced Weathering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    /* --faint darkened from #8e9aa1 on 2026-08-01. It was tuned against a near-white page; on
+       the saturated blue/gold field the small mono labels it drives — the row tags, CITE, the
+       source column — fell to about 2:1 and read as smudges. */
+    --ink:#12181c; --ink2:#46535b; --faint:#5f6d78; --hair:#ccd6dc;
+    --accent:#0b5a8a; --accent-ink:#083f61; --accent-soft:rgba(11,90,138,.055);
+    --gold:#ffcd00; --navy:#182b49;
+    --sans:'Archivo','Helvetica Neue',Helvetica,Arial,sans-serif;
+    --mono:'JetBrains Mono',ui-monospace,'SF Mono',Menlo,Consolas,monospace;
+    --col:min(100% - 3rem, 54rem);
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  /* Warm paper at the top settling to a cool blue-grey at the foot. Deliberately quiet: a
+     saturated gold-into-blue field reads as a sunset gradient, which is a slide-deck look
+     rather than a research one. The blue and gold are still here, but as a warm-to-cool
+     temperature shift you feel rather than a colour you notice — the authority on a page like
+     this comes from restraint and the typography, not from the size of the colour fields.
+     Gold now appears only as the hairline under the section rule, echoing the lockup's own
+     gold underline, so it reads as a deliberate mark. `fixed` so it does not scroll away. */
+  body{
+    margin:0; font-family:var(--sans); color:var(--ink);
+    background:
+      radial-gradient(1200px 700px at 6% 100%, rgba(11,90,138,.13), transparent 66%),
+      radial-gradient(900px 520px at 92% 0%, rgba(255,205,0,.10), transparent 62%),
+      linear-gradient(170deg,#faf8f2 0%,#f2f4f6 44%,#e6edf2 100%);
+    background-attachment:fixed; min-height:100vh;
+    -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
+    display:flex; flex-direction:column;
+  }
+  a{color:inherit}
+
+  /* ── masthead ─────────────────────────────────────────────────────────── */
+  .masthead{
+    width:var(--col); margin:0 auto; padding:clamp(1.6rem,4vw,2.6rem) 0 0;
+    display:flex; align-items:flex-start; justify-content:space-between; gap:1.5rem;
+  }
+  /* The official co-branded UC San Diego / Scripps lockup, replacing the type-only
+     approximation this page carried before. One sanctioned image rather than two marks
+     assembled here — the spacing and the divider rule between them are part of the mark.
+     Source is 1000x104 with alpha, so it is ~2.5x the rendered height on retina. */
+  .lockup{display:block; height:clamp(30px,4.6vw,42px); width:auto; max-width:100%}
+
+  /* ── page body ────────────────────────────────────────────────────────── */
+  .wrap{width:var(--col); margin:0 auto; flex:1 0 auto;
+    padding:clamp(3.2rem,9vw,5.6rem) 0 clamp(2rem,5vw,3rem)}
+
+  h1{margin:0; letter-spacing:-.03em; line-height:1.03;
+    font-size:clamp(2.05rem,5.4vw,3.05rem)}
+  h1 span{display:block}
+  h1 .lead{font-weight:600}
+  h1 .subj{font-weight:800}
+
+  /* Slightly larger than it was: with the affiliations and corresponding-author line gone,
+     the author line is the only thing between the title and the index, and at .95rem it read
+     as a caption stranded in the whitespace they left behind. */
+  .authors{margin:clamp(1.8rem,4vw,2.4rem) 0 0; font-size:1.06rem; font-weight:500;
+    letter-spacing:-.005em; color:var(--ink); display:flex; align-items:baseline; gap:.7rem}
+  /* Borrows the row tags' voice — mono, uppercase, tracked, faint — so the label reads as the
+     same kind of thing as TALK and CAPSTONE further down rather than as part of the names. */
+  .authlabel{font-family:var(--mono); font-size:.58rem; font-weight:500; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--faint); flex:none}
+
+  /* Runs the full column now. The 34rem cap left this block visibly narrower than the title
+     and the rows below it, so it read as indented rather than as part of the same column —
+     the page looked off-centre even though the column itself was centred. */
+  .intro{margin-top:clamp(1.6rem,3.5vw,2.1rem)}
+  .intro p{margin:0 0 .85rem; font-size:1.02rem; line-height:1.62; color:var(--ink2)}
+  .intro p:last-child{margin-bottom:0}
+  .intro b{font-weight:600; color:var(--ink)}
+  /* Panelled, not just rule-and-tint: a card with its own edge and ground reads as a different
+     kind of content at a glance, which is what separates it from the prose above. */
+  .mapsnote{margin-top:1.6rem; padding:1rem 1.15rem 1.05rem;
+    background:rgba(255,255,255,.62); border:1px solid var(--hair); border-radius:9px;
+    border-left:3px solid var(--accent)}
+  .mapsnote .authlabel{display:block; margin-bottom:.55rem; color:var(--accent)}
+  .mapsnote p{margin:0 0 .45rem; font-size:.99rem; line-height:1.55; color:var(--ink2)}
+  .mapsnote p:last-child{margin-bottom:0}
+  .mapsnote b{font-weight:700; color:var(--ink)}
+
+  /* `.affils`, `.corr` and `.funnel` rules removed with their markup on 2026-08-01. */
+
+  /* `.pill` ("Manuscript in preparation") removed with its markup on 2026-08-01. */
+
+
+  /* ── nav rows ─────────────────────────────────────────────────────────── */
+  /* Navy rather than near-black, with a short gold segment at its head — the same gold-under-
+     wordmark device as the lockup at the top of the page. This is the only place gold appears
+     as an actual mark now that it is out of the background, which is what keeps it looking
+     chosen rather than decorative. */
+  .index{margin-top:clamp(2.6rem,7vw,3.8rem); border-top:2px solid var(--navy);
+    position:relative}
+  .index::before{content:""; position:absolute; left:0; top:-2px; width:5.5rem; height:2px;
+    background:var(--gold)}
+
+  .row{position:relative; display:grid; grid-template-columns:6.6rem 1fr 1.4rem;
+    align-items:center; column-gap:1.6rem; padding:1.5rem .3rem;
+    border-bottom:1px solid var(--hair); text-decoration:none; color:inherit;
+    transition:background .28s ease, padding-left .3s cubic-bezier(.2,.7,.2,1)}
+  .row::before{content:""; position:absolute; left:0; top:-1px; bottom:-1px; width:2px;
+    background:var(--accent); transform:scaleY(0);
+    transition:transform .3s cubic-bezier(.2,.7,.2,1)}
+  .row:hover{background:linear-gradient(90deg,var(--accent-soft),transparent 72%); padding-left:1.05rem}
+  .row:hover::before{transform:scaleY(1)}
+  .row:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+
+  .tag{font-family:var(--mono); font-size:.58rem; font-weight:500; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--faint);
+    align-self:stretch; display:flex; align-items:center;
+    border-right:1px solid var(--hair); padding:0 1.5rem 0 0}
+  .title{font-size:clamp(1.18rem,2.9vw,1.45rem); font-weight:700; letter-spacing:-.019em;
+    line-height:1.12; transition:color .2s ease}
+  .row:hover .title{color:var(--accent-ink)}
+  /* Two of these rows are maps that look similar at a glance and differ in what they
+     claim. A title alone would leave a reader guessing which one to open, so the middle
+     column carries a line of orientation under it. */
+  .titlewrap{display:flex; flex-direction:column; gap:.34rem; min-width:0}
+  .rowsub{font-size:.79rem; color:var(--ink2); line-height:1.45; font-weight:400;
+    letter-spacing:0}
+  .rowsub b{font-weight:600; color:var(--ink)}
+  .go{justify-self:end; font-family:var(--mono); font-size:1rem; color:var(--accent);
+    opacity:.4; transform:translateX(-4px);
+    transition:opacity .24s ease, transform .24s ease}
+  .row:hover .go{opacity:1; transform:none}
+
+  /* ── data layers (expands in place) ───────────────────────────────────── */
+  .data{border-bottom:1px solid var(--hair)}
+  .data>summary{list-style:none; cursor:pointer; display:grid;
+    grid-template-columns:6.6rem 1fr 1.4rem; align-items:center; column-gap:1.6rem;
+    padding:1.5rem .3rem; transition:background .28s ease}
+  .data>summary::-webkit-details-marker{display:none}
+  .data>summary:hover{background:linear-gradient(90deg,var(--accent-soft),transparent 72%)}
+  .data>summary:focus-visible{outline:2px solid var(--accent); outline-offset:-2px}
+  .data>summary:hover .title{color:var(--accent-ink)}
+  .plus{justify-self:end; font-family:var(--mono); font-size:1.05rem; color:var(--accent);
+    line-height:1; opacity:.7}
+  .plus::before{content:"+"}
+  .data[open] .plus::before{content:"\2212"}
+
+  .panel{padding:.2rem .3rem 2rem; animation:rise .45s cubic-bezier(.19,.76,.28,1) both}
+  .grp{border-top:1px solid var(--hair); padding-top:.9rem; margin-top:1.1rem}
+  .grp:first-child{border-top:0; margin-top:.3rem; padding-top:0}
+  .grp h3{margin:0 0 .15rem; font-size:.86rem; font-weight:700; letter-spacing:-.008em}
+  .grp h3 em{font-style:normal; font-family:var(--mono); font-size:.57rem; font-weight:500;
+    letter-spacing:.2em; text-transform:uppercase; color:var(--accent); margin-right:.6rem}
+  .grp ul{list-style:none; margin:.5rem 0 0; padding:0}
+  .grp li{display:grid; grid-template-columns:1fr auto; gap:1rem; align-items:baseline;
+    padding:.46rem 0; border-top:1px solid rgba(213,219,222,.6); font-size:.83rem; color:var(--ink2)}
+  .grp li:first-child{border-top:0}
+  .src{font-family:var(--mono); font-size:.66rem; color:var(--faint);
+    letter-spacing:.03em; white-space:nowrap; text-align:right}
+  .note{margin:1.6rem 0 0; padding-top:.9rem; border-top:1px solid var(--hair);
+    font-size:.73rem; color:var(--faint); line-height:1.55}
+  .note code{font-family:var(--mono); font-size:.92em; color:var(--ink2)}
+
+  /* ── footer ───────────────────────────────────────────────────────────── */
+  footer{width:var(--col); margin:0 auto; flex:0 0 auto;
+    padding:clamp(2rem,5vw,3rem) 0 clamp(2rem,5vw,2.8rem);
+    display:flex; align-items:flex-end; justify-content:space-between; gap:2rem}
+  .repo{display:inline-flex; flex-direction:column; gap:.55rem; text-decoration:none; color:var(--faint)}
+  .repo svg{width:18px; height:18px; fill:currentColor; opacity:.75; transition:opacity .2s ease}
+  .repo span{font-family:var(--mono); font-size:.58rem; letter-spacing:.17em; text-transform:uppercase}
+  .repo:hover{color:var(--accent)}
+  .repo:hover svg{opacity:1}
+
+  .cite{text-align:right; max-width:24rem}
+  .cite .lbl{font-family:var(--mono); font-size:.55rem; letter-spacing:.22em;
+    text-transform:uppercase; color:var(--faint)}
+  .cite p{margin:.6rem 0 0; font-size:.71rem; color:var(--ink2); line-height:1.55}
+  .citebar{display:flex; align-items:center; justify-content:flex-end; gap:.75rem; margin-top:.75rem}
+  .doi{font-family:var(--mono); font-size:.55rem; letter-spacing:.16em;
+    text-transform:uppercase; color:var(--faint)}
+  .copy{display:inline-flex; align-items:center; gap:.4rem; cursor:pointer;
+    font-family:var(--mono); font-size:.55rem; letter-spacing:.16em; text-transform:uppercase;
+    color:var(--ink2); background:rgba(255,255,255,.6); border:1px solid var(--hair);
+    border-radius:5px; padding:.36rem .6rem; transition:border-color .2s ease, color .2s ease}
+  .copy:hover{border-color:var(--accent); color:var(--accent)}
+  .copy:focus-visible{outline:2px solid var(--accent); outline-offset:2px}
+  .copy svg{width:10px; height:10px; fill:currentColor}
+
+  @keyframes rise{from{opacity:0; transform:translateY(12px)} to{opacity:1; transform:none}}
+  .reveal{opacity:0; animation:rise .75s cubic-bezier(.19,.76,.28,1) both}
+
+  @media (max-width:620px){
+    .row,.data>summary{grid-template-columns:1fr 1.4rem; row-gap:.45rem; padding:1.3rem .3rem}
+    .tag{grid-column:1/-1; border-right:0; padding:0; margin:0}
+    .grp li{grid-template-columns:1fr; gap:.15rem}
+    .src{text-align:left}
+    footer{flex-direction:column; align-items:flex-start; gap:1.8rem}
+    .cite{text-align:left; max-width:none}
+    .citebar{justify-content:flex-start}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .reveal,.panel{animation:none; opacity:1}
+    .row,.go,.title,.copy{transition:none}
+  }
+</style>
+</head>
+<body>
+
+<header class="masthead reveal" style="animation-delay:.02s">
+  <img class="lockup" src="logos/ucsd-scripps.png"
+       alt="UC San Diego · Scripps Institution of Oceanography">
+</header>
+
+<main class="wrap">
+
+  <h1 class="reveal" style="animation-delay:.06s">
+    <span class="lead">A Statewide Siting Tool for</span>
+    <span class="subj">Coastal Enhanced Weathering</span>
+    <span class="subj">on the California Coast</span>
+  </h1>
+
+  <!-- Masthead pared back to title and authors, 2026-08-01. Gone: the numbered affiliation
+       list, the corresponding-author line, and the segment funnel. The superscripts went with
+       the affiliations — a "1,2*" pointing at a list that no longer exists is a dangling
+       reference, and the asterisk is meaningless once the corresponding-author line is out.
+       The lockup above already establishes UC San Diego and Scripps. -->
+  <p class="authors reveal" style="animation-delay:.12s">
+    <span class="authlabel">Authors</span> Ella Coulson, Connor Mack
+  </p>
+
+  <!-- Orientation for a cold arrival. The rows below each describe themselves, but nothing on
+       the page said what coastal enhanced weathering is, what the screen claims, or which of
+       two similar-looking maps to open first — the three things a reader needs before any of
+       the links mean anything. The last paragraph is the actual guide: a reading order. -->
+  <div class="intro reveal" style="animation-delay:.18s">
+    <!-- Bolded so the paragraphs survive being skimmed: read only the bold and you still get
+         what CEW is, what it does with carbon, the four domains, and the unit of analysis.
+         Kept to one phrase per idea — bolding more than that turns the emphasis back into
+         undifferentiated text. -->
+    <p>
+      Coastal enhanced weathering spreads <b>crushed silicate minerals on sandy beaches</b>. Wave
+      energy grinds them down, and the reaction <b>draws CO<sub>2</sub> out of the atmosphere</b>
+      and stores it in seawater as dissolved bicarbonate.
+    </p>
+    <p>
+      Whether it is suitable in California depends on several questions at once &mdash;
+      <b>chemical, ecological, regulatory, and logistical</b>. This work takes on all four across
+      the state's open coast, divided into <b>3,148 one-kilometre segments</b>: the ocean
+      conditions that set how fast the minerals dissolve, the habitats and protected areas that
+      rule stretches of coast out entirely, the permits and environmental review a deployment
+      would face, and how far each segment sits from the sand-moving operations and mineral
+      sources that would supply it.
+    </p>
+    <!-- Was a "Start here" reading order until 2026-08-01, and it sent the reader to the third
+         row and back up to the second — prescribing a path the page itself contradicts. The
+         rows are already in the order that matters, capstone then current, so this says what
+         the two maps are to each other and lets the order speak for itself. -->
+    <!-- A panel rather than a fourth paragraph, and one line per map. As running prose the
+         two descriptions blurred into the text above them, which is exactly the thing a reader
+         who is skimming needs to catch: that the two rows below are the same screen at two
+         points in time and disagree on purpose. -->
+    <div class="mapsnote">
+      <span class="authlabel">The two maps below</span>
+      <p><b>Suitability Map</b> &mdash; the June 2026 capstone version, which combines every
+        layer into a composite score.</p>
+      <p><b>Siting Tool</b> &mdash; where the work went next: same segments, no score, each
+        threshold stated on its own.</p>
+    </div>
+  </div>
+
+  <nav class="index reveal" style="animation-delay:.34s">
+
+    <!-- First row deliberately: for someone arriving cold — an interviewer, say — twenty
+         minutes of narrated context is a better entry point than a map with 25 toggles.
+         The only outbound link on the page, so it carries an external arrow and opens in
+         a new tab rather than navigating the reader off it. -->
+    <a class="row" href="https://www.youtube.com/watch?v=-7Q1JN1ok7I"
+       target="_blank" rel="noopener noreferrer">
+      <span class="tag">Talk</span>
+      <span class="titlewrap">
+        <span class="title">Carbon on the Coast</span>
+        <span class="rowsub">
+          Capstone talk, MAS&nbsp;CSP 2026 Symposium &mdash; the case for coastal enhanced
+          weathering in California, and what the tool found. <b>Opens on YouTube.</b>
+        </span>
+      </span>
+      <span class="go" aria-hidden="true">&#8599;</span>
+    </a>
+
+    <a class="row" href="interactive_maps/ca_cew_suitability_map.html">
+      <span class="tag">Capstone</span>
+      <span class="titlewrap">
+        <span class="title">Suitability Map</span>
+        <span class="rowsub">
+          The June&nbsp;2026 capstone map. Eligibility, then a <b>composite suitability
+          score</b> and its four sub-scores &mdash; dissolution, residence, efficiency,
+          storage &mdash; over the 3,148 segments.
+        </span>
+      </span>
+      <span class="go" aria-hidden="true">&rarr;</span>
+    </a>
+
+    <a class="row" href="interactive_maps/ca_cew_merged_map.html">
+      <span class="tag">Current</span>
+      <span class="titlewrap">
+        <span class="title">Siting Tool</span>
+        <span class="rowsub">
+          The current tool. Same segments, <b>no composite score</b>: a five-gate
+          eligibility test, the permits each surviving segment triggers, and two stated
+          thresholds that narrow the eligible coast.
+        </span>
+      </span>
+      <span class="go" aria-hidden="true">&rarr;</span>
+    </a>
+
+    <!-- "Main-text Figures" (main-figures.html) and "Supplementary Figures & Tables"
+         (supplement.html) were rows here until 2026-08-01. Neither file has ever existed, so
+         both 404'd. Removed rather than greyed out: this page is being shared with people
+         evaluating the work, and a row promising figures that do not open costs more than the
+         absent row does. Restore them when the files exist. -->
+
+    <details class="data">
+      <summary>
+        <span class="tag">Data</span>
+        <span class="title">Data Layers</span>
+        <span class="plus" aria-hidden="true"></span>
+      </summary>
+
+      <div class="panel">
+
+        <section class="grp">
+          <h3><em>00</em>Shoreline &amp; segmentation</h3>
+          <ul>
+            <li><span>Shoreline polyline and type (<code>map_class</code> / <code>shore_code</code>)</span><span class="src">CDFW ds3115</span></li>
+            <li><span>3,148 stable 1&nbsp;km open-coast LineStrings</span><span class="src">derived</span></li>
+          </ul>
+        </section>
+
+        <section class="grp">
+          <h3><em>01</em>Tier 1 &mdash; eligibility gate</h3>
+          <ul>
+            <li><span>Marine protected areas (SMR, SMCA, SMP, special closures)</span><span class="src">CDFW</span></li>
+            <li><span>Kelp canopy persistence &mdash; 100&nbsp;m seaward buffer</span><span class="src">KelpWatch SBC LTER</span></li>
+            <li><span>Eelgrass (<i>Zostera marina</i>) &mdash; 500&nbsp;m exclusion</span><span class="src">CDFW CEMP / NOAA SAV</span></li>
+            <li><span>Estuary and harbor interiors</span><span class="src">USFWS NWI</span></li>
+            <li><span>Terrestrial and coastal critical habitat</span><span class="src">USFWS</span></li>
+            <li><span>Marine critical habitat</span><span class="src">NMFS</span></li>
+          </ul>
+        </section>
+
+        <section class="grp">
+          <h3><em>02</em>Tier 2 &mdash; three-layer profile</h3>
+          <ul>
+            <li><span>Significant wave height, m &mdash; the ordering variable</span><span class="src">CDIP MOP + buoys</span></li>
+            <li><span>Sea-surface temperature climatology</span><span class="src">NASA MUR</span></li>
+            <li><span>Surface currents</span><span class="src">SCCOOS / CeNCOOS HF radar</span></li>
+            <li><span>Nearshore and offshore slope</span><span class="src">ETOPO 2022</span></li>
+            <li><span>pH</span><span class="src">CODAP-NA / WCOA</span></li>
+            <li><span>Upwelling index</span><span class="src">NOAA CUTI</span></li>
+            <li><span>Mixed-layer depth, 0.5&nbsp;&deg;C criterion</span><span class="src">HYCOM 91.2</span></li>
+          </ul>
+        </section>
+
+        <section class="grp">
+          <h3><em>04</em>Infrastructure overlay</h3>
+          <ul>
+            <li><span>Beach nourishment projects &mdash; 43 sites statewide</span><span class="src">ASBPA / USACE</span></li>
+            <li><span>Dune restoration and living shorelines &mdash; 17 sites</span><span class="src">CA Dune Science Network</span></li>
+            <li><span>Ultramafic and mafic mineral sources &mdash; 116 quarries</span><span class="src">USGS / CGS</span></li>
+          </ul>
+        </section>
+
+        <section class="grp">
+          <h3><em>05</em>Permits &amp; environmental review</h3>
+          <ul>
+            <li><span>Trigger rules &mdash; baseline, habitat/MPA, and dune pathways</span><span class="src">cew_regulatory_permitting</span></li>
+            <li><span>Coastal Development Permit &mdash; PRC &sect;30600 <em>et seq.</em></span><span class="src">CCC</span></li>
+            <li><span>CWA &sect;404 fill permit and &sect;401 certification</span><span class="src">USACE / RWQCB</span></li>
+            <li><span>State tide and submerged lands lease</span><span class="src">CSLC</span></li>
+            <li><span>CEQA review &mdash; EIR, MND, or exemption</span><span class="src">lead agency</span></li>
+            <li><span>ESA &sect;7 consultation &mdash; listed-species critical habitat</span><span class="src">USFWS / NMFS</span></li>
+            <li><span>MPA allowed-use permit &mdash; 14 CCR &sect;632(b)</span><span class="src">CDFW</span></li>
+            <li><span>NEPA review, where a federal permit is triggered</span><span class="src">lead federal agency</span></li>
+          </ul>
+        </section>
+
+        <section class="grp">
+          <h3><em>07</em>Reported diagnostics &mdash; not scored</h3>
+          <ul>
+            <li><span>Gridded CDR efficiency, cross-checked against the ordering</span><span class="src">Zhou et al. 2025</span></li>
+            <li><span>Mineral dissolution kinetics &mdash; downstream flux only</span><span class="src">Oelkers 2018; Rimstidt 2012</span></li>
+          </ul>
+        </section>
+
+        <p class="note">
+          There is no composite score. The measured layers are reported side by side and never
+          summed; eligible segments are ordered on wave height alone, and the permit layer lists
+          triggers rather than weighting them. Counts above are the June&nbsp;2026 statewide run
+          &mdash; pipeline output <code>ca_cew_segments.gpkg</code> (read
+          <code>layer="segments"</code>). Raw drivers are fetched by <code>fetch_*.py</code> and
+          are not tracked in git.
+        </p>
+
+      </div>
+    </details>
+
+  </nav>
+
+</main>
+
+<footer class="reveal" style="animation-delay:.42s">
+  <a class="repo" href="#" aria-label="Source repository">
+    <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+    <span>ca-cew</span>
+  </a>
+
+  <div class="cite">
+    <div class="lbl">Cite</div>
+    <p id="citation">Coulson, E., Mack, C. J. &amp; Merrifield, M. A. A statewide siting tool for coastal enhanced weathering on the California coast (2026).</p>
+    <div class="citebar">
+      <span class="doi">No DOI yet</span>
+      <button class="copy" id="copybtn" type="button">
+        <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M10 1H2a1 1 0 0 0-1 1v9h1.5V2.5H10V1Zm3 2.5H5a1 1 0 0 0-1 1V14a1 1 0 0 0 1 1h8a1 1 0 0 0 1-1V4.5a1 1 0 0 0-1-1Zm-.5 10h-7V5h7v8.5Z"/></svg>
+        <span id="copylabel">Copy</span>
+      </button>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('copybtn').addEventListener('click', async function () {
+    var text = document.getElementById('citation').textContent.trim();
+    var label = document.getElementById('copylabel');
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch (e) {
+      var ta = document.createElement('textarea');
+      ta.value = text;
+      ta.setAttribute('readonly', '');
+      ta.style.position = 'fixed';
+      ta.style.opacity = '0';
+      document.body.appendChild(ta);
+      ta.select();
+      try { document.execCommand('copy'); } catch (_) { label.textContent = 'Copy failed'; }
+      document.body.removeChild(ta);
+    }
+    if (label.textContent !== 'Copy failed') label.textContent = 'Copied';
+    setTimeout(function () { label.textContent = 'Copy'; }, 1600);
+  });
+</script>
+
+</body>
+</html>
