@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>A Statewide Siting Tool for Coastal Enhanced Weathering</title>
+<title>Statewide Siting Tools for Coastal Enhanced Weathering</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
@@ -84,8 +84,18 @@
     background:rgba(255,255,255,.62); border:1px solid var(--hair); border-radius:9px;
     border-left:3px solid var(--accent)}
   .mapsnote .authlabel{display:block; margin-bottom:.55rem; color:var(--accent)}
-  .mapsnote p{margin:0 0 .45rem; font-size:.99rem; line-height:1.55; color:var(--ink2)}
-  .mapsnote p:last-child{margin-bottom:0}
+  /* Two columns, not a wrapped paragraph: at prose width the second line of each
+     description used to wrap back under the map's name, so the name stopped reading as a
+     label and the eye lost the boundary between the two maps. The name column is sized to
+     the wider of the two names, so both descriptions share one left edge. */
+  .mapsnote .pair{display:grid; grid-template-columns:max-content 1fr;
+    column-gap:.55rem; row-gap:.45rem; margin:0;
+    font-size:.99rem; line-height:1.55; color:var(--ink2)}
+  /* Right-aligned so the two dashes stack; left-aligned they sit at different x, because
+     the column is as wide as the longer name. */
+  .mapsnote dt{font-weight:700; color:var(--ink); text-align:right}
+  .mapsnote dt::after{content:"\2014"; margin-left:.4em; font-weight:400; color:var(--ink2)}
+  .mapsnote dd{margin:0}
   .mapsnote b{font-weight:700; color:var(--ink)}
 
   /* `.affils`, `.corr` and `.funnel` rules removed with their markup on 2026-08-01. */
@@ -195,6 +205,12 @@
     .row,.data>summary{grid-template-columns:1fr 1.4rem; row-gap:.45rem; padding:1.3rem .3rem}
     .tag{grid-column:1/-1; border-right:0; padding:0; margin:0}
     .grp li{grid-template-columns:1fr; gap:.15rem}
+    /* Too narrow for a name column — stack, and drop the trailing dash, which would
+       otherwise dangle at the end of a line with nothing after it. */
+    .mapsnote .pair{grid-template-columns:1fr; row-gap:.1rem}
+    .mapsnote dt{text-align:left}
+    .mapsnote dt::after{content:none}
+    .mapsnote dd:not(:last-child){margin-bottom:.5rem}
     .src{text-align:left}
     footer{flex-direction:column; align-items:flex-start; gap:1.8rem}
     .cite{text-align:left; max-width:none}
@@ -216,7 +232,7 @@
 <main class="wrap">
 
   <h1 class="reveal" style="animation-delay:.06s">
-    <span class="lead">A Statewide Siting Tool for</span>
+    <span class="lead">Statewide Siting Tools for</span>
     <span class="subj">Coastal Enhanced Weathering</span>
     <span class="subj">on the California Coast</span>
   </h1>
@@ -236,9 +252,16 @@
        the links mean anything. The last paragraph is the actual guide: a reading order. -->
   <div class="intro reveal" style="animation-delay:.18s">
     <!-- Bolded so the paragraphs survive being skimmed: read only the bold and you still get
-         what CEW is, what it does with carbon, the four domains, and the unit of analysis.
-         Kept to one phrase per idea — bolding more than that turns the emphasis back into
-         undifferentiated text. -->
+         what CEW is, what it does with carbon, the four domains, the unit of analysis, and
+         that there are two maps. Kept to one phrase per idea — bolding more than that turns
+         the emphasis back into undifferentiated text.
+         The "two maps rather than one" clause is load-bearing: until it was added, the prose
+         read as a single tool and the panel below sprang a second one on the reader. Ella
+         pluralised the manuscript title to match, 2026-08-02 — "Statewide siting tools", no
+         article, chosen over "Two statewide siting tools" so the title does not carry a count
+         that a third map would date. Three places must keep saying the same thing: the
+         <title>, the h1, and the footer citation. The row labelled "Siting Tool" below is a
+         different thing — that names one specific map, not the paper. -->
     <p>
       Coastal enhanced weathering spreads <b>crushed silicate minerals on sandy beaches</b>. Wave
       energy grinds them down, and the reaction <b>draws CO<sub>2</sub> out of the atmosphere</b>
@@ -251,7 +274,8 @@
       conditions that set how fast the minerals dissolve, the habitats and protected areas that
       rule stretches of coast out entirely, the permits and environmental review a deployment
       would face, and how far each segment sits from the sand-moving operations and mineral
-      sources that would supply it.
+      sources that would supply it. The result is <b>two maps rather than one</b>: the same
+      segments screened twice, a few months apart, asking different questions of them.
     </p>
     <!-- Was a "Start here" reading order until 2026-08-01, and it sent the reader to the third
          row and back up to the second — prescribing a path the page itself contradicts. The
@@ -263,11 +287,15 @@
          points in time and disagree on purpose. -->
     <div class="mapsnote">
       <span class="authlabel">The two maps below</span>
-      <p><b>Suitability Map</b> &mdash; the June 2026 capstone version, which ranks the
-        eligible coast by a composite score built from <b>ocean conditions</b>.</p>
-      <p><b>Siting Tool</b> &mdash; where the work went next: same segments, no score, and a
-        different question &mdash; <b>what it would take to work there</b>, each threshold
-        stated on its own.</p>
+      <dl class="pair">
+        <dt>Suitability Map</dt>
+        <dd>the June 2026 capstone version, which ranks the eligible coast by a composite
+          score built from <b>ocean conditions</b>.</dd>
+        <dt>Siting Tool</dt>
+        <dd>where the work went next: same segments, no score, and a different question
+          &mdash; <b>what it would take to work there</b>, each threshold stated on its
+          own.</dd>
+      </dl>
     </div>
   </div>
 
@@ -443,7 +471,7 @@
 
   <div class="cite">
     <div class="lbl">Cite</div>
-    <p id="citation">Coulson, E., Mack, C. J. &amp; Merrifield, M. A. A statewide siting tool for coastal enhanced weathering on the California coast (2026).</p>
+    <p id="citation">Coulson, E., Mack, C. J. &amp; Merrifield, M. A. Statewide siting tools for coastal enhanced weathering on the California coast (2026).</p>
     <div class="citebar">
       <span class="doi">No DOI yet</span>
       <button class="copy" id="copybtn" type="button">
