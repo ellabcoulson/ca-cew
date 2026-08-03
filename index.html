@@ -89,12 +89,13 @@
      label and the eye lost the boundary between the two maps. The name column is sized to
      the wider of the two names, so both descriptions share one left edge. */
   .mapsnote .pair{display:grid; grid-template-columns:max-content 1fr;
-    column-gap:.55rem; row-gap:.45rem; margin:0;
+    column-gap:1.15rem; row-gap:.45rem; margin:0;
     font-size:.99rem; line-height:1.55; color:var(--ink2)}
-  /* Right-aligned so the two dashes stack; left-aligned they sit at different x, because
-     the column is as wide as the longer name. */
-  .mapsnote dt{font-weight:700; color:var(--ink); text-align:right}
-  .mapsnote dt::after{content:"\2014"; margin-left:.4em; font-weight:400; color:var(--ink2)}
+  /* No dash between name and description. It was a separator built for running prose, and in
+     two columns it has to sit at one edge or the other: left-aligning the names left the two
+     dashes at different x, right-aligning the dashes left the two names ragged. Neither reads
+     as deliberate. The gutter separates them instead, so both edges are flush. */
+  .mapsnote dt{font-weight:700; color:var(--ink)}
   .mapsnote dd{margin:0}
   .mapsnote b{font-weight:700; color:var(--ink)}
 
@@ -205,11 +206,8 @@
     .row,.data>summary{grid-template-columns:1fr 1.4rem; row-gap:.45rem; padding:1.3rem .3rem}
     .tag{grid-column:1/-1; border-right:0; padding:0; margin:0}
     .grp li{grid-template-columns:1fr; gap:.15rem}
-    /* Too narrow for a name column — stack, and drop the trailing dash, which would
-       otherwise dangle at the end of a line with nothing after it. */
+    /* Too narrow for a name column — stack name above description. */
     .mapsnote .pair{grid-template-columns:1fr; row-gap:.1rem}
-    .mapsnote dt{text-align:left}
-    .mapsnote dt::after{content:none}
     .mapsnote dd:not(:last-child){margin-bottom:.5rem}
     .src{text-align:left}
     footer{flex-direction:column; align-items:flex-start; gap:1.8rem}
